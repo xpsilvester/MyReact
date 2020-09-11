@@ -22,29 +22,59 @@ export const MyReact = {
   //   }
   //   return element;
   // }
+  // createElement(type, attributes, ...children) {
+  //   let element;
+  //   // 判断element的类型, 如果是元素标签的字符串类型, 那么就通过ElementWrapper创建实DOM, 否则就直接实例化本身返回其render的jsx, 进行重新调用createElement构建元素。
+  //   if(typeof type === 'string') {
+  //      element = new ElementWrapper(type);
+  //   } else {
+  //     element = new type;
+  //   }
+  
+  //   for (let name in attributes) {
+  //     element.setAttribute(name, attributes[name])
+  //   }
+  
+  //   for (let child of children) {
+  //     // 如果child是字符串那么直接实例化TextNodeWrapper,得到文本节点。
+  //     if(typeof child === 'string') {
+  //       child = new TextNodeWrapper(child)
+  //     }
+  //     element.appendChild(child)
+  //   }
+    
+  //   return element;
+  // },
   createElement(type, attributes, ...children) {
     let element;
-    // 判断element的类型, 如果是元素标签的字符串类型, 那么就通过ElementWrapper创建实DOM, 否则就直接实例化本身返回其render的jsx, 进行重新调用createElement构建元素。
     if(typeof type === 'string') {
        element = new ElementWrapper(type);
     } else {
       element = new type;
     }
   
+    
     for (let name in attributes) {
       element.setAttribute(name, attributes[name])
     }
   
-    for (let child of children) {
-      // 如果child是字符串那么直接实例化TextNodeWrapper,得到文本节点。
-      if(typeof child === 'string') {
-        child = new TextNodeWrapper(child)
+    function insertChildren(children) {
+      for (let child of children) {
+        if(typeof child === 'string') {
+          child = new TextNodeWrapper(child)
+        }
+        if(typeof child === 'object' && child instanceof Array) {
+          insertChildren(child);
+          return;
+        }
+        element.appendChild(child)
       }
-      element.appendChild(child)
     }
+  
+    insertChildren(children);
     
     return element;
-  },
+  },  
   render(component, parentElement) {
     parentElement.appendChild(component.root)
   }
@@ -67,6 +97,8 @@ export class Component {
 
   get root() {
     if(!this._root) {
+      //console.log(this.render())
+      //调用组件的render
       this._root = this.render().root;
     }
     return this._root
