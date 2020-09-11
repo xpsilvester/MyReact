@@ -1,3 +1,6 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+
 module.exports = {
     entry: {
       main: './main.js'
@@ -26,5 +29,18 @@ module.exports = {
     optimization: {
       minimize: false
     },
-    mode: 'development'
-  }
+    mode: 'development',
+    devServer: {
+        contentBase: '/',
+        hot: true,
+        port: 5000,
+        open: true
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+          title: 'My React'
+        }),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+    ]
+}
