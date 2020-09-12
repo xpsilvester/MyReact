@@ -102,14 +102,14 @@ export class Component {
     this.children.push(component);
   }
 
-  get root() {
-    if(!this._root) {
-      //console.log(this.render())
-      //调用组件的render
-      this._root = this.render().root;
-    }
-    return this._root
-  }
+  // get root() {
+  //   if(!this._root) {
+  //     //console.log(this.render())
+  //     //调用组件的render
+  //     this._root = this.render().root;
+  //   }
+  //   return this._root
+  // }
 
   [RENDER_TO_DOM](range) {
     this._range = range;
