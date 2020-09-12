@@ -19,7 +19,7 @@ class TestComponent extends Component {
         <span>{
             this.state.count.toString()
           }
-          <button onClick={() => {this.state.count++ ;this.rerender()}}>点击</button>
+          <button onClick={() => {this.setState({count:this.state.count+1 })}}>点击</button>
           </span>
           {
             this.children
