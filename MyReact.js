@@ -1,3 +1,5 @@
+const RENDER_TO_DOM = Symbol('render to dom')
+
 export const MyReact = {
   // createElement(type, attributes, ...children) {
   //   //console.log('type:',type,',attributes:',attributes,',children:',children)
@@ -76,15 +78,20 @@ export const MyReact = {
     return element;
   },  
   render(component, parentElement) {
-    parentElement.appendChild(component.root)
-  }
+    const range = document.createRange();
+    range.setStart(parentElement, 0);
+    range.setEnd(parentElement, parentElement.childNodes.length);
+    range.deleteContents();
+    component[RENDER_TO_DOM](range)
+  } 
 }
 
 export class Component {
   constructor(props) {
     this.props = Object.create(null);
     this._root = null;
-    this.children = []
+    this.children = [];
+    this._range = null;
   }
 
   setAttribute(name, value) {
@@ -103,6 +110,16 @@ export class Component {
     }
     return this._root
   }
+
+  [RENDER_TO_DOM](range) {
+    this._range = range;
+    this.render()[RENDER_TO_DOM](range);
+  }
+
+  rerender() {
+    this._range.deleteContents();
+    this[RENDER_TO_DOM](this._range) 
+  }
 }
 
 
@@ -112,16 +129,30 @@ class ElementWrapper {
   }
 
   setAttribute(name, value) {
+    if(name.match(/^on([\s\S]+)/)) {
+      this.root.addEventListener(RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase()), value)
+    }
     this.root.setAttribute(name, value)
   }
 
   appendChild(component) {
     this.root.appendChild(component.root)
   }
+
+  [RENDER_TO_DOM](range) {
+    range.deleteContents();
+    range.insertNode(this.root);
+  }
+
 }
 
 class TextNodeWrapper{
   constructor(content) {
     this.root = document.createTextNode(content);
   }
+  [RENDER_TO_DOM](range) {
+    range.deleteContents();
+    range.insertNode(this.root);
+  }
+
 }

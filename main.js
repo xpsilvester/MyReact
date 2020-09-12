@@ -6,19 +6,32 @@ let a = <div id="hello">
     </div>
 
 
-class TestComponent extends Component  {
-  render() {
-    return <div id="hello">hello world!<br/> children: {this.children}</div>
-  }
+class TestComponent extends Component {
+    constructor() {
+      super();
+      this.state = {
+        count: 1
+      }
+    }
+    render() {
+      return <div id="hello">
+        hello world!
+        <span>{
+            this.state.count.toString()
+          }
+          <button onClick={() => {this.state.count++ ;this.rerender()}}>点击</button>
+          </span>
+          {
+            this.children
+          }
+        </div>
+    }
 }
 
-MyReact.render(<TestComponent name="123">
-    <div>i</div>
-    <div>am</div>
-</TestComponent>, document.body)
+MyReact.render(<TestComponent></TestComponent>, document.body)
 
 
 let b = <TestComponent name="123" />
-console.log(b)
+
 
 
