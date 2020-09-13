@@ -73,7 +73,7 @@ class Game extends Component {
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: Array(9).fill('')
         }
       ],
       stepNumber: 0,
